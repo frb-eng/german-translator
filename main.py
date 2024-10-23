@@ -7,4 +7,4 @@ app = FastAPI()
 async def read_root():
     return {"message": "Hello, World!"}
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+# app.mount("/", StaticFiles(directory="static", html=True), name="static")

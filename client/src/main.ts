@@ -1,5 +1,17 @@
 import './style.css'
 
+
+async function fetchData() {
+  const response = await fetch('/api');
+
+  if (!response.ok) {
+    throw new Error('Coudn`t fetch api');
+  }
+
+  const json = await response.json();
+  return json;
+}
+
 document.querySelector("form")?.addEventListener("submit", (event) => {
   event.preventDefault();
   const word = (document.getElementById("wordInput") as HTMLInputElement).value;
@@ -41,3 +53,5 @@ function getExampleSentence(word: string) {
   };
   return examples[word.toLowerCase()] || "Example sentence not found.";
 }
+
+fetchData().catch(err => console.error(err));
