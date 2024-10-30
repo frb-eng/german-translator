@@ -1,11 +1,14 @@
-import './style.css'
+import "./style.css";
 
-
-async function fetchData() {
-  const response = await fetch('/api');
+async function fetchData(word: string) {
+  const response = await fetch("/api", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: word }),
+  });
 
   if (!response.ok) {
-    throw new Error('Coudn`t fetch api');
+    throw new Error("Coudn`t fetch api");
   }
 
   const json = await response.json();
@@ -15,13 +18,14 @@ async function fetchData() {
 document.querySelector("form")?.addEventListener("submit", (event) => {
   event.preventDefault();
   const word = (document.getElementById("wordInput") as HTMLInputElement).value;
+  fetchData(word).catch((err) => console.error(err));
   const translation = getTranslation(word);
   const exampleSentence = getExampleSentence(word);
 
   const resultDiv = document.getElementById("result");
 
   if (!resultDiv) {
-    return
+    return;
   }
 
   resultDiv.innerHTML = `
@@ -39,7 +43,7 @@ function getTranslation(word: string) {
     cat: "Katze",
     dog: "Hund",
     friend: "Freund",
-  }
+  };
   return translations[word.toLowerCase()] || "Translation not found";
 }
 
@@ -53,5 +57,3 @@ function getExampleSentence(word: string) {
   };
   return examples[word.toLowerCase()] || "Example sentence not found.";
 }
-
-fetchData().catch(err => console.error(err));

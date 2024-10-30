@@ -3,14 +3,18 @@ import subprocess
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
 load_dotenv()
 
+class Word(BaseModel):
+    text: str
+
 app = FastAPI()
 
-@app.get("/api")
-async def read_root():
-    return {"message": "Hello, World!"}
+@app.post("/api")
+async def read_root(word: Word):
+    return {"message": word}
 
 # app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
