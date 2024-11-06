@@ -1,5 +1,9 @@
 import "./style.css";
 
+class RESTError extends Error {
+
+}
+
 async function fetchData(word: string) {
   const response = await fetch("/api", {
     method: "POST",
@@ -8,7 +12,8 @@ async function fetchData(word: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Coudn`t fetch api");
+    const json = await response.json();
+    throw new RESTError(json.detail);
   }
 
   const json = await response.json();
@@ -19,10 +24,14 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const word = (document.getElementById("wordInput") as HTMLInputElement).value;
   const resultDiv = document.getElementById("result");
+  const errorDiv = document.getElementById("error");
 
-  if (!resultDiv) {
+  if (!resultDiv || !errorDiv) {
     return;
   }
+
+  resultDiv.innerHTML = '';
+  errorDiv.innerHTML = '';
 
   try {
     const response: { translation: string; example: string } = await fetchData(word);
@@ -33,6 +42,11 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
     <p>${response.example}</p>
 `;
   } catch(error) {
-    console.error(error)
+    if (error instanceof RESTError) {
+      errorDiv.innerHTML = error.message;
+      return
+    }
+
+    errorDiv.innerHTML = 'Coudn\'t connect to server'
   }
 });

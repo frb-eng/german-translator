@@ -36,6 +36,10 @@ button:hover {
   background-color: #0056b3;
 }
 
-.result {
+.result, .error {
   margin-top: 20px;
+}
+
+.error {
+  color: red;
 }
