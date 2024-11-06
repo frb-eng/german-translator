@@ -2,6 +2,8 @@
 
 ![alt text](docs/ui.png)
 
+![alt text](docs/error-ui.png)
+
 ![architecture](<docs/german translator.png>)
 
 UI was created using [create-vite](https://vite.dev/guide/#scaffolding-your-first-vite-project) with `vanilla-ts` template
