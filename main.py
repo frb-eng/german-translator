@@ -9,8 +9,8 @@ from pydantic import BaseModel
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 
-# llm = ChatOllama(model='llama3.1').bind(response_format={"type": "json_object"})
-llm = ChatOpenAI(model='gpt-4o', api_key=environ.get('OPEN_API_TOKEN')).bind(response_format={"type": "json_object"})
+llm = ChatOllama(model='llama3.1').bind(response_format={"type": "json_object"})
+# llm = ChatOpenAI(model='gpt-4o', api_key=environ.get('OPEN_API_TOKEN')).bind(response_format={"type": "json_object"})
 
 load_dotenv()
 
@@ -24,22 +24,30 @@ async def read_root(word: Word):
     system_message = SystemMessage("""
         You are a helpful assitante. You will receive a single word in any language.
         Your task is to translate to german.
-        Please reply with translation and an example sentence.
-        Please return JSON.
+        Else please reply with translation and an example sentence.
+        Please return only valid JSON.
         Example success response:
         {
             "translation": "apple",
             "example": "The apple is red."
         }
-        In case you notice the user provided multiple words or sentence please return the following error JSON:
-        {
-            "error": "Multiple words are not supported"
-        }
         """)
     human_message = HumanMessage(word.text)
+    multipleWordsResponse = json.loads(llm.invoke([SystemMessage("""
+        Your task is to detect if multiple words are provided. 
+        Please return only valid JSON.
+        In case yes:
+        {
+            "result": true
+        }
+        In case no:
+        {
+            "result": false
+        }
+    """), human_message]).content)['result']
     response = json.loads(llm.invoke([system_message, human_message]).content)
-    if 'error' in response:
-        raise HTTPException(status_code=400, detail=response['error'])
+    if multipleWordsResponse:
+        raise HTTPException(status_code=400, detail="Multiple word are not supported")
     return response
 
 # app.mount("/", StaticFiles(directory="static", html=True), name="static")
