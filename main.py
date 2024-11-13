@@ -24,12 +24,13 @@ async def read_root(word: Word):
     system_message = SystemMessage("""
         You are a helpful assitante. You will receive a single word in any language.
         Your task is to translate to german.
-        Else please reply with translation and an example sentence.
+        Please reply with translation and an example sentence.
+        For nouns return the article as well.
         Please return only valid JSON.
-        Example success response:
+        Example response:
         {
-            "translation": "apple",
-            "example": "The apple is red."
+            "translation": "der Apfel",
+            "example": "Der Apfel ist rot."
         }
         """)
     human_message = HumanMessage(word.text)
