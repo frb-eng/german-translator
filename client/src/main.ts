@@ -26,13 +26,15 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
   const model = (document.getElementById("modelSelect") as HTMLSelectElement).value;
   const resultDiv = document.getElementById("result");
   const errorDiv = document.getElementById("error");
+  const loadingDiv = document.getElementById("loading");
 
-  if (!resultDiv || !errorDiv) {
+  if (!resultDiv || !errorDiv || !loadingDiv) {
     return;
   }
 
   resultDiv.innerHTML = '';
   errorDiv.innerHTML = '';
+  loadingDiv.style.display = 'block';
 
   try {
     const response: { translation: string; example: string } = await fetchData(word, model);
@@ -49,5 +51,7 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
     }
 
     errorDiv.innerHTML = 'Coudn\'t connect to server'
+  } finally {
+    loadingDiv.style.display = 'none';
   }
 });
