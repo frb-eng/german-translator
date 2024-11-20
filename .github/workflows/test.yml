@@ -23,6 +23,7 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: ./client
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -39,3 +40,4 @@ jobs:
 
     - name: Run tests
       run: npm test
+      working-directory: ./client
