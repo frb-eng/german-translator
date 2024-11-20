@@ -51,3 +51,13 @@ button:hover {
 .error {
   color: #ff6b6b;
 }
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  border-radius: 5px;
+}

@@ -9,18 +9,31 @@ from pydantic import BaseModel
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 
-llm = ChatOllama(model='llama3.1').bind(response_format={"type": "json_object"})
-# llm = ChatOpenAI(model='gpt-4o', api_key=environ.get('OPEN_API_TOKEN')).bind(response_format={"type": "json_object"})
+llms = [
+    {
+        'id': 'llama3.1', 'model': ChatOllama(model='llama3.1').bind(response_format={"type": "json_object"}),
+
+    }, {
+        'id': 'gpt-4o', 'model': ChatOpenAI(model='gpt-4o', api_key=environ.get('OPEN_API_TOKEN')).bind(response_format={"type": "json_object"})
+    }
+]
 
 load_dotenv()
 
+
 class Word(BaseModel):
     text: str
+    model: str
+
 
 app = FastAPI()
 
+
 @app.post("/api")
 async def read_root(word: Word):
+    llm = next((item['model'] for item in llms if item['id'] == word.model), None)
+    if llm is None:
+        raise HTTPException(status_code=404, detail="Model not found")
     system_message = SystemMessage("""
         You are a helpful assitante. You will receive a single word in any language.
         Your task is to translate to german.
@@ -48,7 +61,8 @@ async def read_root(word: Word):
     """), human_message]).content)['result']
     response = json.loads(llm.invoke([system_message, human_message]).content)
     if multipleWordsResponse:
-        raise HTTPException(status_code=400, detail="Multiple word are not supported")
+        raise HTTPException(
+            status_code=400, detail="Multiple word are not supported")
     return response
 
 # app.mount("/", StaticFiles(directory="static", html=True), name="static")

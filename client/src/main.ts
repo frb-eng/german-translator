@@ -4,11 +4,11 @@ class RESTError extends Error {
 
 }
 
-async function fetchData(word: string) {
+async function fetchData(word: string, model: string) {
   const response = await fetch("/api", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: word }),
+    body: JSON.stringify({ text: word, model: model }),
   });
 
   if (!response.ok) {
@@ -23,6 +23,7 @@ async function fetchData(word: string) {
 document.querySelector("form")?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const word = (document.getElementById("wordInput") as HTMLInputElement).value;
+  const model = (document.getElementById("modelSelect") as HTMLSelectElement).value;
   const resultDiv = document.getElementById("result");
   const errorDiv = document.getElementById("error");
 
@@ -34,7 +35,7 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
   errorDiv.innerHTML = '';
 
   try {
-    const response: { translation: string; example: string } = await fetchData(word);
+    const response: { translation: string; example: string } = await fetchData(word, model);
     resultDiv.innerHTML = `
     <h3>Translation:</h3>
     <p>${response.translation}</p>
