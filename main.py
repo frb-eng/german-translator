@@ -1,5 +1,5 @@
 import json
-from os import environ
+from os import environ, makedirs
 import subprocess
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -8,6 +8,14 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
+from openai import OpenAI
+import base64
+from speech_generator import generate_speech
+
+openAIClient = OpenAI(
+    # This is the default and can be omitted
+    api_key=environ.get("OPEN_API_TOKEN"),
+)
 
 llms = [
     {
@@ -63,9 +71,15 @@ async def read_root(word: Word):
     if multipleWordsResponse:
         raise HTTPException(
             status_code=400, detail="Multiple word are not supported")
-    return response
+        
+    return {
+        "translation": response['translation'],
+        "example": response['example'],
+        "translationSpeech": generate_speech(response['translation'], True),
+        "exampleSpeech": generate_speech(response['example'], False)
+    }
 
-# app.mount("/", StaticFiles(directory="static", html=True), name="static")
+# app.mount("/speeches", StaticFiles(directory="speeches"), name="static")
 
 
 if environ.get('ENV') == 'development':

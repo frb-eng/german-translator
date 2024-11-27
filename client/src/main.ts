@@ -37,13 +37,21 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
   loadingDiv.style.display = 'block';
 
   try {
-    const response: { translation: string; example: string } = await fetchData(word, model);
+    const response: { translation: string; example: string; translationSpeech: string, exampleSpeech: string } = await fetchData(word, model);
     resultDiv.innerHTML = `
     <h3>Translation:</h3>
     <p>${response.translation}</p>
+    <audio id="translationSpeech" controls autoplay>
+      <source src="data:audio/mpeg;base64,${response.translationSpeech}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
     <h3>Example Sentence:</h3>
     <p>${response.example}</p>
-`;
+    <audio id="exampleSpeech" controls>
+      <source src="data:audio/mpeg;base64,${response.exampleSpeech}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  `;
   } catch(error) {
     if (error instanceof RESTError) {
       errorDiv.innerHTML = error.message;

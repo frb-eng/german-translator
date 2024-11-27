@@ -92,3 +92,8 @@ select {
     background-color: #333;
   }
 }
+
+#speechAudio {
+  margin-top: 20px;
+  width: 100%;
+}
