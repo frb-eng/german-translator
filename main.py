@@ -34,6 +34,8 @@ class Word(BaseModel):
     text: str
     model: str
 
+class ImageRequest(BaseModel):
+    text: str
 
 app = FastAPI()
 
@@ -77,9 +79,13 @@ async def read_root(word: Word):
         "translation": response['translation'],
         "example": response['example'],
         "translationSpeech": "api/speech/" + generate_speech(response['translation'], True),
-        "exampleSpeech": "api/speech/" + generate_speech(response['example'], False),
-        "exampleImage": "api/image/" + generate_image(response['example'])
+        "exampleSpeech": "api/speech/" + generate_speech(response['example'], False)
     }
+
+@app.post("/api/generate-image")
+async def generate_image_endpoint(request: ImageRequest):
+    image_key = generate_image(request.text)
+    return {"imageUrl": f"/api/image/{image_key}"}
 
 @app.get("/api/speech/{key}")
 async def get_speech(key: str):

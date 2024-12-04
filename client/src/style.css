@@ -103,3 +103,26 @@ img {
   height: auto;
   margin-top: 20px;
 }
+
+.generate-image-button {
+  margin-bottom: 10px;
+}
+
+.skeleton-loader {
+  width: 100%;
+  height: 200px;
+  background-color: #e0e0e0;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #c0c0c0;
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}

@@ -41,7 +41,6 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
       example: string;
       translationSpeech: string;
       exampleSpeech: string;
-      exampleImage: string;
     } = await fetchData(word, model);
     resultDiv.innerHTML = `
     <h3>Translation:</h3>
@@ -56,15 +55,41 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
       <source src="${response.exampleSpeech}">
       Your browser does not support the audio element.
     </audio>
-    <img src="${response.exampleImage}" alt="${response.example}">
+    <button type="button" id="generateImageButton" class="generate-image-button">Generate Image</button>
+    <div id="imageContainer"></div>
   `;
+
+    document.getElementById("generateImageButton")?.addEventListener("click", async () => {
+      const imageContainer = document.getElementById("imageContainer");
+      if (imageContainer) {
+        imageContainer.innerHTML = '<div class="skeleton-loader"></div>';
+      }
+      try {
+        const imageResponse = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: response.example }),
+        });
+
+        if (!imageResponse.ok) {
+          throw new RESTError("Failed to generate image");
+        }
+
+        const imageData = await imageResponse.json();
+        if (imageContainer) {
+          imageContainer.innerHTML = `<img src="${imageData.imageUrl}" alt="${response.example}">`;
+        }
+      } catch (error) {
+        errorDiv.innerHTML = "Failed to generate image";
+      }
+    });
   } catch (error) {
     if (error instanceof RESTError) {
       errorDiv.innerHTML = error.message;
       return;
     }
 
-    errorDiv.innerHTML = "Coudn't connect to server";
+    errorDiv.innerHTML = "Couldn't connect to server";
   } finally {
     loadingDiv.style.display = "none";
   }
