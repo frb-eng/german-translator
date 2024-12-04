@@ -1,8 +1,6 @@
 import "./style.css";
 
-class RESTError extends Error {
-
-}
+class RESTError extends Error {}
 
 async function fetchData(word: string, model: string) {
   const response = await fetch("/api", {
@@ -23,7 +21,8 @@ async function fetchData(word: string, model: string) {
 document.querySelector("form")?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const word = (document.getElementById("wordInput") as HTMLInputElement).value;
-  const model = (document.getElementById("modelSelect") as HTMLSelectElement).value;
+  const model = (document.getElementById("modelSelect") as HTMLSelectElement)
+    .value;
   const resultDiv = document.getElementById("result");
   const errorDiv = document.getElementById("error");
   const loadingDiv = document.getElementById("loading");
@@ -32,12 +31,18 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
     return;
   }
 
-  resultDiv.innerHTML = '';
-  errorDiv.innerHTML = '';
-  loadingDiv.style.display = 'block';
+  resultDiv.innerHTML = "";
+  errorDiv.innerHTML = "";
+  loadingDiv.style.display = "block";
 
   try {
-    const response: { translation: string; example: string; translationSpeech: string, exampleSpeech: string } = await fetchData(word, model);
+    const response: {
+      translation: string;
+      example: string;
+      translationSpeech: string;
+      exampleSpeech: string;
+      exampleImage: string;
+    } = await fetchData(word, model);
     resultDiv.innerHTML = `
     <h3>Translation:</h3>
     <p>${response.translation}</p>
@@ -51,15 +56,16 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
       <source src="${response.exampleSpeech}">
       Your browser does not support the audio element.
     </audio>
+    <img src="${response.exampleImage}" alt="${response.example}">
   `;
-  } catch(error) {
+  } catch (error) {
     if (error instanceof RESTError) {
       errorDiv.innerHTML = error.message;
-      return
+      return;
     }
 
-    errorDiv.innerHTML = 'Coudn\'t connect to server'
+    errorDiv.innerHTML = "Coudn't connect to server";
   } finally {
-    loadingDiv.style.display = 'none';
+    loadingDiv.style.display = "none";
   }
 });

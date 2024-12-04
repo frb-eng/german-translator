@@ -1,12 +1,11 @@
 from os import environ
 from openai import OpenAI
 import uuid
+from data_store import data_store
 
 openAIClient = OpenAI(
     api_key=environ.get("OPEN_API_TOKEN"),
 )
-
-data_store = {}
 
 def generate_speech(text: str, word: bool) -> str:
     speech_response = openAIClient.audio.speech.create(

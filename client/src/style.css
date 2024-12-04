@@ -97,3 +97,9 @@ select {
   margin-top: 20px;
   width: 100%;
 }
+
+img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+}

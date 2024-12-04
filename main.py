@@ -9,8 +9,9 @@ from pydantic import BaseModel
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 from openai import OpenAI
-import base64
-from speech_generator import generate_speech, data_store
+from data_store import data_store
+from image_generator import generate_image
+from speech_generator import generate_speech
 
 openAIClient = OpenAI(
     # This is the default and can be omitted
@@ -76,7 +77,8 @@ async def read_root(word: Word):
         "translation": response['translation'],
         "example": response['example'],
         "translationSpeech": "api/speech/" + generate_speech(response['translation'], True),
-        "exampleSpeech": "api/speech/" + generate_speech(response['example'], False)
+        "exampleSpeech": "api/speech/" + generate_speech(response['example'], False),
+        "exampleImage": "api/image/" + generate_image(response['example'])
     }
 
 @app.get("/api/speech/{key}")
@@ -84,6 +86,12 @@ async def get_speech(key: str):
     if key not in data_store:
         raise HTTPException(status_code=404, detail="Speech not found")
     return Response(content=data_store[key], media_type="audio/mpeg")
+
+@app.get("/api/image/{key}")
+async def get_image(key: str):
+    if key not in data_store:
+        raise HTTPException(status_code=404, detail="Image not found")
+    return Response(content=data_store[key], media_type="image/jpeg")
 
 # app.mount("/speeches", StaticFiles(directory="speeches"), name="static")
 
