@@ -1,7 +1,7 @@
 import json
 from os import environ, makedirs
 import subprocess
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -10,7 +10,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 from openai import OpenAI
 import base64
-from speech_generator import generate_speech
+from speech_generator import generate_speech, data_store
 
 openAIClient = OpenAI(
     # This is the default and can be omitted
@@ -75,9 +75,15 @@ async def read_root(word: Word):
     return {
         "translation": response['translation'],
         "example": response['example'],
-        "translationSpeech": generate_speech(response['translation'], True),
-        "exampleSpeech": generate_speech(response['example'], False)
+        "translationSpeech": "api/speech/" + generate_speech(response['translation'], True),
+        "exampleSpeech": "api/speech/" + generate_speech(response['example'], False)
     }
+
+@app.get("/api/speech/{key}")
+async def get_speech(key: str):
+    if key not in data_store:
+        raise HTTPException(status_code=404, detail="Speech not found")
+    return Response(content=data_store[key], media_type="audio/mpeg")
 
 # app.mount("/speeches", StaticFiles(directory="speeches"), name="static")
 

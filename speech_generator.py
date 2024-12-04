@@ -1,11 +1,12 @@
-
 from os import environ
 from openai import OpenAI
-import base64
+import uuid
 
 openAIClient = OpenAI(
     api_key=environ.get("OPEN_API_TOKEN"),
 )
+
+data_store = {}
 
 def generate_speech(text: str, word: bool) -> str:
     speech_response = openAIClient.audio.speech.create(
@@ -13,5 +14,6 @@ def generate_speech(text: str, word: bool) -> str:
         voice="alloy",
         input= "..." + text if word else text
     )
-    speech_base64 = base64.b64encode(speech_response.content).decode('utf-8')
-    return speech_base64
+    speech_key = str(uuid.uuid4())
+    data_store[speech_key] = speech_response.content
+    return speech_key

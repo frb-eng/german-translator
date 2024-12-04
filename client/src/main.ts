@@ -42,13 +42,13 @@ document.querySelector("form")?.addEventListener("submit", async (event) => {
     <h3>Translation:</h3>
     <p>${response.translation}</p>
     <audio id="translationSpeech" controls autoplay>
-      <source src="data:audio/mpeg;base64,${response.translationSpeech}" type="audio/mpeg">
+      <source src="${response.translationSpeech}">
       Your browser does not support the audio element.
     </audio>
     <h3>Example Sentence:</h3>
     <p>${response.example}</p>
     <audio id="exampleSpeech" controls>
-      <source src="data:audio/mpeg;base64,${response.exampleSpeech}" type="audio/mpeg">
+      <source src="${response.exampleSpeech}">
       Your browser does not support the audio element.
     </audio>
   `;
