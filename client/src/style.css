@@ -126,3 +126,17 @@ img {
     background-color: #e0e0e0;
   }
 }
+
+.speech-input-button {
+  padding: 10px;
+  background-color: #3a86ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.speech-input-button:hover {
+  background-color: #2663cc;
+}
